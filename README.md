@@ -3,7 +3,11 @@ Internet of Things Project - Smart Grocery
 
 Steps to take: 
 1) Setup 2 Raspberry Pi according to the fritzing diagrams below 
+
+
 ![alt text](https://github.com/amosngSP/IOT_SmartGrocery/tree/main/Misc%20Assets/frit1.JPG)
+
+
 2) In this Raspberry Pi, there is another hx711 sensor. It can be patched by: VCC pin to 5V, GND pin to GND, DT pin to GPIO5 and SCK pin to GPIO6. 
 
 ![alt text](https://github.com/amosngSP/IOT_SmartGrocery/tree/main/Misc%20Assets/frit2.JPG)
