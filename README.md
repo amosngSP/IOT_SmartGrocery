@@ -12,9 +12,7 @@ Steps to take:
 
 ![alt text](https://github.com/amosngSP/IOT_SmartGrocery/tree/main/Misc%20Assets/frit2.JPG)
 
-3) On both Raspberry Pi, do the following: 
-  - create a file called "requirements.txt"
-  - put the following into the file: 
+3) On both Raspberry Pi, add the following into the file "requirements.txt": 
   - Asgiref
   - autopep8
   - django==2.2.10
