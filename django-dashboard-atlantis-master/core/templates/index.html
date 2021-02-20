@@ -1,0 +1,250 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+			
+	<div class="content">
+		<div class="panel-header bg-primary-gradient">
+			<div class="page-inner py-5">
+				<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+					<div>
+						<h2 class="text-white pb-2 fw-bold">Dashboard</h2>
+						<h5 class="text-white op-7 mb-2">Smart Grocery Tracker Dashboard</h5>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-inner mt--5">
+			<div class="row mt--2">
+				<div class="col-md-6">
+					<div class="card full-height">
+						<div class="card-body">
+							<div class="card-title">Status of Barcode Scanner</div>
+							<div class="card-category">Change whether to add or deduct a product when a product is scanned</div>
+							<div id="status1" style="font-size:30px;" class="h5 mb-0 font-weight-bold text-gray-800">-</div>
+							<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" style="color:white;font-size:25px;" id="button">Switch to -</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+<div class="card full-height">
+						<div class="card-body">
+							<div class="card-title">Grocery List</div>
+							<div class="card-category">Items that need refilling(Quantity dropped below threshold value)</div>
+							<table class="table table-striped mt-3" id="grocerytable">
+								<thead>
+									<tr>
+										<th scope="col">Item Description</th>
+										<th scope="col">Quantity Left</th>
+									</tr>
+								</thead>
+
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="card full-height">
+						<div class="card-body">
+							<div class="card-title">Historical Graph</div>
+<div class="card-category">Past Historical Values of the weight of Rice</div>
+
+								<div class="chart-container">
+									<canvas id="historicalgraph"></canvas>
+
+								</div>
+
+
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="card full-height">
+						<div class="card-body">
+							<div class="card-title">Live Graph</div>
+<div class="card-category">Light Values indicate whether the fridge is opened or closed</div>
+
+								<div class="chart-container">
+									<canvas id="livegraph"></canvas>
+
+								</div>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+	<script>
+		var historicalGraph = document.getElementById("historicalgraph").getContext('2d');
+		var liveGraph = document.getElementById("livegraph").getContext('2d');
+
+		$(document).ready(function(){
+
+		$("#button").click(function (){
+			$.get("/toggle_barcode_status/");
+			checkState();
+		});
+
+			$("#grocerytable").DataTable({
+			"pageLength":2,
+			"autoWidth": true,
+			ajax: "../get_grocery_list/",
+			columns: [
+			{data:"item_desc"},
+			{data:"qty"}
+			]
+
+			});
+			plotHistoricalGraph();
+			plotLiveGraph();
+
+			setInterval(function(){
+			checkState();
+			},3000);
+			setInterval(function(){
+				plotLiveGraph()
+			},6000);
+		});
+function checkState(){
+			$.get("/get_barcode_status/", function(data){
+			console.log("'"+data+"'")
+				if (data == "0"){
+					$("#status1").html("DEDUCT")
+					$("#button").html("Switch to ADD")
+				} else {
+					$("#status1").html("ADD")
+					$("#button").html("Switch to DEDUCT")
+				}
+			});
+		}
+	function plotLiveGraph(){
+		$.get('/live_graph/', function(data){
+				console.log(data)
+				var data_labels = data.labels
+				console.log(data_labels)
+				var data_data = data.data
+				console.log(data_data)
+
+				var myLiveGraph = new Chart(liveGraph, {
+			type: 'line',
+			data: {
+				labels: data_labels,
+				datasets:[{
+					label: "Graph of Fridge",
+					borderColor: "#f3545c",
+					pointBorderColor: "#FFF",
+					pointBackgroundColor: "#f3545c",
+					pointBorderWidth: 2,
+					pointHoverRadius: 4,
+					pointHoverBorderWidth: 1,
+					pointRadius: 4,
+					backgroundColor: 'transparent',
+					fill: true,
+					borderWidth: 2,
+					data: data_data
+				}]
+			},
+			options : {
+				responsive: true,
+				maintainAspectRatio: false,
+				legend: {
+					position: 'bottom',
+					labels : {
+						padding: 10,
+						fontColor: '#1d7af3',
+					}
+				},
+				tooltips: {
+					bodySpacing: 4,
+					mode:"nearest",
+					intersect: 0,
+					position:"nearest",
+					xPadding:10,
+					yPadding:10,
+					caretPadding:10
+				},
+				layout:{
+					padding:{left:15,right:15,top:15,bottom:15}
+				}
+			}
+		});
+
+			})
+	}
+
+	function plotHistoricalGraph(){
+		$.get('/historical_graph/', function(data){
+				console.log(data)
+				var data_labels = data.labels
+				console.log(data_labels)
+				var data_data = data.data
+				console.log(data_data)
+
+				var myHistoricalGraph = new Chart(historicalGraph, {
+			type: 'line',
+			data: {
+				labels: data_labels,
+				datasets:[{
+					label: "Rice Weight over time",
+					borderColor: "#1d7af3",
+					pointBorderColor: "#FFF",
+					pointBackgroundColor: "#1d7af3",
+					pointBorderWidth: 2,
+					pointHoverRadius: 4,
+					pointHoverBorderWidth: 1,
+					pointRadius: 4,
+					backgroundColor: 'transparent',
+					fill: true,
+					borderWidth: 2,
+					data: data_data
+				}]
+			},
+			options : {
+				responsive: true,
+				maintainAspectRatio: false,
+				legend: {
+					position: 'bottom',
+					labels : {
+						padding: 10,
+						fontColor: '#1d7af3',
+					}
+				},
+				tooltips: {
+					bodySpacing: 4,
+					mode:"nearest",
+					intersect: 0,
+					position:"nearest",
+					xPadding:10,
+					yPadding:10,
+					caretPadding:10
+				},
+				layout:{
+					padding:{left:15,right:15,top:15,bottom:15}
+				}
+			}
+		});
+
+			})
+	}
+
+
+
+	</script>
+
+{% endblock javascripts %}
