@@ -15,20 +15,20 @@ Steps to take:
 3) On both Raspberry Pi, do the following: 
   - create a file called "requirements.txt"
   - put the following into the file: 
-Asgiref
-autopep8
-django==2.2.10
-pycodestyle
-pytz
-sqlparse
-Unipath
-dj-database-url
-python-decouple
-gunicorn
-whitenoise
-boto3
-simplejson
-requests
+  - Asgiref
+  - autopep8
+  - django==2.2.10
+  - pycodestyle
+  - pytz
+  - sqlparse
+  - Unipath
+  - dj-database-url
+  - python-decouple
+  - gunicorn
+  - whitenoise
+  - boto3
+  - simplejson
+  - requests
 
 4) Save the file and execute "pip3 install -r requirements.txt"
 5) Execute "sudo raspi-config". Go to interface setttings and inteface options -> enable Serial User need to check what interface the barcode is on. it might be on /dev/hidraw0 or /dev/hidraw1 or in some cases /dev/hidraw2 . User need to then go to line 118 of api.py and edit accordingly.
