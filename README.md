@@ -30,7 +30,7 @@ Steps to take:
 
 4) Save the file and execute "pip3 install -r requirements.txt"
 5) Execute "sudo raspi-config". Go to interface setttings and inteface options -> enable Serial User need to check what interface the barcode is on. it might be on /dev/hidraw0 or /dev/hidraw1 or in some cases /dev/hidraw2 . User need to then go to line 118 of api.py and edit accordingly.
-6) Open Arduino IDE and upload "capture_light.ino" 
+6) On the 1st Raspberry Pi, Open Arduino IDE and upload "capture_light.ino" 
 7) Execute the following files in different terminals on the 1st Raspberry Pi: weight.py, LDR.py, picam_rekognition.py
 8) Execute the following on the 2nd Raspberry Pi: “python manage.py makemigrations” and “python manage.py migrate”
 9) On the 2nd Raspberry Pi, execute “python manage.py runserver” to start the web application. To specify port number, add 0.0.0.0:<port_no> at the end.
